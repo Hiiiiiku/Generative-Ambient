@@ -38,7 +38,7 @@ class MainFragment : Fragment() {
     fun startGame()
     {
 
-        findNavController().navigate(R.id.action_mainFragment_to_generationFragment3)
+//        findNavController().navigate(R.id.action_mainFragment_to_generationFragment3)
     }
 
 }

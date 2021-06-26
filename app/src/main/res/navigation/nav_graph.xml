@@ -3,23 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/mainFragment">
+    app:startDestination="@id/generationFragment3">
 
-    <fragment
-        android:id="@+id/mainFragment"
-        android:name="com.hiku.generative.ui.main.MainFragment"
-        android:label="main_fragment"
-        tools:layout="@layout/main_fragment" >
-        <action
-            android:id="@+id/action_mainFragment_to_generationFragment3"
-            app:destination="@id/generationFragment3" />
-    </fragment>
     <fragment
         android:id="@+id/generationFragment3"
         android:name="com.hiku.generative.GenerationFragment"
-        android:label="GenerationFragment" >
-        <action
-            android:id="@+id/action_generationFragment3_to_mainFragment"
-            app:destination="@id/mainFragment" />
-    </fragment>
+        android:label="GenerationFragment" />
 </navigation>

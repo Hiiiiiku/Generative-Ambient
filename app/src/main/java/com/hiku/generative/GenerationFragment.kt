@@ -13,7 +13,9 @@ import androidx.navigation.fragment.findNavController
 import com.hiku.generative.databinding.FragmentGenerationBinding
 import com.hiku.generative.ui.main.MainViewModel
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_generation.*
 import kotlinx.coroutines.*
+import java.sql.Types.NULL
 
 
 class GenerationFragment : Fragment() {
@@ -51,11 +53,15 @@ class GenerationFragment : Fragment() {
         }
     }
 
+    fun startGame(){
 
-    fun startGame()
-    {
-        findNavController().navigate(R.id.action_generationFragment3_to_mainFragment)
     }
+
+//    private fun homeScreen()
+//    {
+//        findNavController().navigate(R.id.action_generationFragment3_to_mainFragment)
+//    }
+
 
     fun playSound(){
         if (mMediaPlayer != null) {
@@ -65,8 +71,8 @@ class GenerationFragment : Fragment() {
 
         val soundNames = Constants.SOUND_NAMES
 
-        GlobalScope.launch(Dispatchers.Main) {
-            repeat(10) {
+        var job = GlobalScope.launch(Dispatchers.Main) {
+            while (true) {
 
                 startVertex = MarkovChain().main(startVertex)
                 var id = resources.getIdentifier(soundNames[startVertex], "raw",
@@ -75,20 +81,22 @@ class GenerationFragment : Fragment() {
 
                 var mediaPlayer = MediaPlayer.create(context, id)
                 mediaPlayer?.start()
-                delay(3000)
-                mediaPlayer?.reset()
-                mediaPlayer?.release()
+                delay(500)
+                var job2 = GlobalScope.launch(Dispatchers.Main){
+                    delay(1000)
+                    mediaPlayer?.reset()
+                    mediaPlayer?.release()
+                }
+
             }
             println("done")
         }
 
-//            var rangeA: Double
-        startVertex = MarkovChain().main(startVertex)
-
-        var id = getResources().getIdentifier(soundNames[startVertex], "raw",
-                getActivity()?.getPackageName()
-        )
+        button.setOnClickListener() {
+            job?.cancel()
+        }
     }
+
 
 //--------------- working delay template-----------------
 
