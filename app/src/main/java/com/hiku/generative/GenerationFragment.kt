@@ -7,16 +7,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import com.hiku.generative.databinding.FragmentGenerationBinding
 import com.hiku.generative.ui.main.MainViewModel
-import java.util.*
+import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.*
 
 
 class GenerationFragment : Fragment() {
 
     private val sharedViewModel : MainViewModel by activityViewModels()
     private var binding: FragmentGenerationBinding? = null
+    private var startVertex = 0
+
 
     private lateinit var viewModel: MainViewModel
     var mMediaPlayer: MediaPlayer? = null
@@ -28,6 +33,11 @@ class GenerationFragment : Fragment() {
                               savedInstanceState: Bundle?): View {
         val fragmentBinding = FragmentGenerationBinding.inflate(inflater, container, false)
         binding = fragmentBinding
+
+        viewLifecycleOwner.lifecycleScope.launch {
+
+        }
+
 
         return fragmentBinding.root
     }
@@ -47,62 +57,53 @@ class GenerationFragment : Fragment() {
         findNavController().navigate(R.id.action_generationFragment3_to_mainFragment)
     }
 
-    fun playSound() {
+    fun playSound(){
         if (mMediaPlayer != null) {
             mMediaPlayer!!.release()
             mMediaPlayer = null
         }
-        val soundNames = arrayOf("b", "c", "des", "f")
-            var rangeA: Double
-            var rangeB: Double
-            //        double [][] myNumbers = {{0.1, 0.2, 0.3, 0.4},
-//                {0.1, 0.2, 0.3, 0.4},
-//                {0.1, 0.2, 0.3, 0.4},
-//                {0.1, 0.2, 0.3, 0.4}};
 
-            val myNumbers = arrayOf(
-                arrayOf(0.6, 0.7, 0.8, 1.0),
-                arrayOf(0.6, 0.7, 0.8, 1.0),
-                arrayOf(0.6, 0.7, 0.8, 1.0),
-                arrayOf(0.6, 0.7, 0.8, 1.0),
-                arrayOf(0.6, 0.7, 0.8, 1.0)
-            )
-            var k = 0
-            var vertex = 0
-//            val myNumbers = doubleArrayOf(0.6, 0.7, 0.8, 1.0)
-//            while(k != 10) {
-                var r = Random()
-                var randomValue = 0 + (1 - 0) * r.nextDouble()
-//                        rangeA=0.0000000000000001;
+        val soundNames = Constants.SOUND_NAMES
 
-                for (j in myNumbers.indices) {
-                    if (j != 0) {
-//                rangeA = myNumbers[i-1];
-                    }
-                    rangeB = myNumbers[vertex][j]
-                    if (randomValue <= rangeB) {
-//                        vertex = j
-                        var id = getResources().getIdentifier(soundNames[j], "raw",
-                            getActivity()?.getPackageName()
-                        )
-                        println(id)
-                        println(getActivity()?.getPackageName())
-                        println(j)
-//                        val mediaPlayer = MediaPlayer.create(context, id)
-//                        mediaPlayer.start()
+        GlobalScope.launch(Dispatchers.Main) {
+            repeat(10) {
 
-                        val mediaPlayer = MediaPlayer.create(context, id)
-                        mediaPlayer.start()
-                        mediaPlayer?.release()
+                startVertex = MarkovChain().main(startVertex)
+                var id = resources.getIdentifier(soundNames[startVertex], "raw",
+                        activity?.packageName
+                )
 
-                        break
-                    }
-                }
-//                k += 1
-//            }
-//        var mediaPlayer = MediaPlayer.create(context, raw.ges)
-//        mediaPlayer.start()
+                var mediaPlayer = MediaPlayer.create(context, id)
+                mediaPlayer?.start()
+                delay(3000)
+                mediaPlayer?.reset()
+                mediaPlayer?.release()
+            }
+            println("done")
+        }
+
+//            var rangeA: Double
+        startVertex = MarkovChain().main(startVertex)
+
+        var id = getResources().getIdentifier(soundNames[startVertex], "raw",
+                getActivity()?.getPackageName()
+        )
     }
+
+//--------------- working delay template-----------------
+
+//    fun main() {
+//        GlobalScope.launch(Dispatchers.Main) {
+//            for (i in 10 downTo 1) {
+//                startVertex = MarkovChain().main(startVertex)
+//                println("vertex: $startVertex")
+//                delay(5000)
+//            }
+//            println("done")
+//        }
+//    }
+
+
 
     override fun onStop() {
         super.onStop()
