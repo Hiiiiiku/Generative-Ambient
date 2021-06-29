@@ -16,6 +16,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_generation.*
 import kotlinx.coroutines.*
 import java.sql.Types.NULL
+import kotlin.random.Random
 
 
 class GenerationFragment : Fragment() {
@@ -23,12 +24,17 @@ class GenerationFragment : Fragment() {
     private val sharedViewModel : MainViewModel by activityViewModels()
     private var binding: FragmentGenerationBinding? = null
     private var startVertex = 0
+    private var isClicked = 0
+    private val soundNames = Constants.SOUND_NAMES
+    private var isInfoClicked = 0
+
 
 
     private lateinit var viewModel: MainViewModel
     var mMediaPlayer: MediaPlayer? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -53,50 +59,116 @@ class GenerationFragment : Fragment() {
         }
     }
 
-    fun startGame(){
-
-    }
-
-//    private fun homeScreen()
-//    {
-//        findNavController().navigate(R.id.action_generationFragment3_to_mainFragment)
-//    }
-
-
     fun playSound(){
-        if (mMediaPlayer != null) {
-            mMediaPlayer!!.release()
-            mMediaPlayer = null
-        }
 
-        val soundNames = Constants.SOUND_NAMES
 
-        var job = GlobalScope.launch(Dispatchers.Main) {
-            while (true) {
 
-                startVertex = MarkovChain().main(startVertex)
-                var id = resources.getIdentifier(soundNames[startVertex], "raw",
-                        activity?.packageName
-                )
+        if(isClicked == 0) {
+            isClicked = 1
+            if (mMediaPlayer != null) {
+                mMediaPlayer!!.release()
+                mMediaPlayer = null
+            }
 
-                var mediaPlayer = MediaPlayer.create(context, id)
-                mediaPlayer?.start()
-                delay(500)
-                var job2 = GlobalScope.launch(Dispatchers.Main){
-                    delay(1000)
-                    mediaPlayer?.reset()
-                    mediaPlayer?.release()
+            //MarkovChain().sumMatrix(Constants.MARKOV_MATRIX_RAW)
+
+
+
+            var job = GlobalScope.launch(Dispatchers.Main) {
+                while (true) {
+                    var randomValue = Random.nextInt(100,4000).toLong()
+                    startVertex = MarkovChain().main(startVertex)
+                    println(startVertex)
+                    println(soundNames[startVertex])
+                    var id = resources.getIdentifier(soundNames[startVertex], "raw",
+                            activity?.packageName
+                    )
+                    println(id)
+
+
+                    var mediaPlayer = MediaPlayer.create(context, id)
+                    delay(randomValue)
+                    mediaPlayer?.start()
+
+                    var job2 = GlobalScope.launch(Dispatchers.Main){
+                        delay(5000)
+                        mediaPlayer?.reset()
+                        mediaPlayer?.release()
+                    }
+
                 }
+            }
+            button2.visibility = View.INVISIBLE;
+            button.visibility = View.VISIBLE
+
+            button.setOnClickListener() {
+                job?.cancel()
+                println("Job canceled")
+                isClicked = 0
+                button2.visibility = View.VISIBLE;
+                button.visibility = View.INVISIBLE;
 
             }
-            println("done")
         }
 
-        button.setOnClickListener() {
-            job?.cancel()
+    }
+
+    fun backgoundButton() {
+        var job = GlobalScope.launch(Dispatchers.Main) {
+            startVertex = MarkovChain().main(startVertex)
+            println(startVertex)
+            println(soundNames[startVertex])
+            var id = resources.getIdentifier(soundNames[startVertex], "raw",
+                    activity?.packageName
+            )
+            println(id)
+
+
+            var mediaPlayer = MediaPlayer.create(context, id)
+            mediaPlayer?.start()
+
+            var job2 = GlobalScope.launch(Dispatchers.Main) {
+                delay(2000)
+                mediaPlayer?.reset()
+                mediaPlayer?.release()
+            }
         }
     }
 
+    fun info(){
+        if(isInfoClicked == 0)
+        {
+            button6.visibility = View.INVISIBLE
+            back.visibility = View.VISIBLE
+            button.visibility = View.INVISIBLE
+            button2.visibility = View.INVISIBLE;
+            textView.visibility = View.INVISIBLE
+            bgbuttonup.visibility = View.INVISIBLE
+            bgbuttonright.visibility = View.INVISIBLE
+            bgbuttonleft.visibility = View.INVISIBLE
+            bgbuttondown.visibility = View.INVISIBLE
+            textView2.visibility = View.VISIBLE
+            isInfoClicked = 1
+        }else{
+            if(isClicked == 1)
+            {
+                button.visibility = View.VISIBLE
+            }else
+            {
+                button2.visibility = View.VISIBLE;
+            }
+            button6.visibility = View.VISIBLE
+            textView2.visibility = View.INVISIBLE
+            textView.visibility = View.VISIBLE
+            bgbuttonup.visibility = View.VISIBLE
+            bgbuttonright.visibility = View.VISIBLE
+            bgbuttonleft.visibility = View.VISIBLE
+            bgbuttondown.visibility = View.VISIBLE
+            back.visibility = View.INVISIBLE
+            isInfoClicked = 0
+        }
+
+    }
 
 //--------------- working delay template-----------------
 

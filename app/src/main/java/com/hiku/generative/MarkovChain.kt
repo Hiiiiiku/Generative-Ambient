@@ -2,6 +2,7 @@ package com.hiku.generative
 import java.util.*
 
 class MarkovChain {
+
     fun main(startVertex: Int): Int {
         var rangeA: Double
         var rangeB: Double
@@ -23,10 +24,11 @@ class MarkovChain {
             if (randomValue <= rangeB) {
                 //println("chance: " + myNumbers[vertex][startVertex])
                 vertex = startVertex
-                //println("end vertex: $vertex")
+                println("end vertex: $vertex")
                 break
             }
         }
         return(vertex)
     }
+
 }

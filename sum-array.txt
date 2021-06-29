@@ -1,0 +1,41 @@
+fun sumMatrix(arr: Array<Array<Double>>) {
+    for(row in arr.indices){
+        for(col in arr.indices)
+        {
+            if(col >= 1)
+            {
+                arr[row][col] += arr[row][col-1]
+            }
+        }
+     }
+    for(row in arr.indices){
+        for(col in arr.indices)
+        {
+            	
+            	print(arr[row][col])
+                print(" ")
+
+        }
+        println()
+    }
+}
+
+fun main() {
+    val MARKOV_MATRIX_RAW = arrayOf(
+        arrayOf(0.6, 0.1, 0.1, 0.2),
+        arrayOf(0.6, 0.1, 0.1, 0.2),
+        arrayOf(0.6, 0.1, 0.1, 0.2),
+        arrayOf(0.6, 0.1, 0.1, 0.2)
+
+	)
+//     println(MARKOV_MATRIX_RAW.size)
+//     println(MARKOV_MATRIX_RAW.indices)
+    sumMatrix(MARKOV_MATRIX_RAW)
+//     println("Hello, world!!!")
+    
+}
+
+0.6 0.7 0.7999999999999999 1.0 
+0.6 0.7 0.7999999999999999 1.0 
+0.6 0.7 0.7999999999999999 1.0 
+0.6 0.7 0.7999999999999999 1.0 

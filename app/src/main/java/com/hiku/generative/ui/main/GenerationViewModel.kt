@@ -14,17 +14,6 @@ import kotlinx.coroutines.runBlocking
 
 class GenerationViewModel : ViewModel() {
 
-    private var startVertex = 0
-
-    fun runForever() {
-        viewModelScope.launch {
-            while(true) {
-                delay(5000)
-                startVertex = MarkovChain().main(startVertex)
-                println("GenerationFragment: $startVertex")
-            }
-        }
-    }
 
 
 
